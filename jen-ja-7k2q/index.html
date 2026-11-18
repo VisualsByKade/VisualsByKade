@@ -124,8 +124,19 @@ const ACCOUNTS = {               // heslo (bez ohledu na velikost písmen) -> ú
   "cukrkanda": { email:"on@jenomondra.app",  role:"on"  },
 };
 const PW_SUFFIX = "-jo2026";     // Supabase chce min. 6 znaků
-const PHOTOS = ["fotky/1.jpg","fotky/2.jpg","fotky/3.jpg"];   // Ondrovy fotky na kartách
-const BIOS = ["Hledám někoho, kdo mi bude říkat, že jsem hezkej. Tebe.","Jediný kluk v celé aplikaci. Náhoda?","Red flags: žádný. Green flags: všechny."];
+const PHOTOS = Array.from({length:10}, (_, i) => `fotky/${i+1}.jpg`);   // Ondrovy fotky na kartách
+const BIOS = [
+  "Nesu chipsy. Jsou pro nás oba. Asi. 🍿",
+  "Zkoušel jsem kalhoty. Sluší mi? Rozhodni ty. 👖",
+  "Jazyk ven = jsem připravený na rande. 😛",
+  "Zahraju ti serenádu. Na kytaru i pod oknem. 🎸",
+  "Romantik. Růži mám vždycky po ruce. Nebo v puse. 🌹",
+  "Volám ti. Zase. Zvedni to. 📞",
+  "Po tréninku. Palec nahoru, jestli taky. 👍",
+  "Usměvavý, hodný, k mání. Teda jen pro tebe.",
+  "Ráno bez kafe. Prosím buď na mě hodná.",
+  "Tajemný kluk v černém. Hledá svou holku.",
+];
 const NOPES = [["Tos asi nechtěla 🤨","Palec ti sklouzl, že jo?"],["Chyba systému ⚠️","Swipe doleva tu není podporovaný."],["Opravdu?! 😢","Ondra teď smutně kouká do zdi."]];
 /* ===================== */
 

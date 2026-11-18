@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Jenom Já 💘</title>
+<style>
+  :root { --pink:#fd297b; --orange:#ff655b; --bg:#111; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,sans-serif; overflow:hidden; }
+  .grad { background:linear-gradient(135deg,var(--pink),var(--orange)); }
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+  .hidden { display:none !important; }
+  /* gate */
+  #gate h1 { font-size:42px; font-weight:900; margin-bottom:6px; }
+  #gate p { opacity:.85; margin-bottom:28px; text-align:center; }
+  #gate input { font-size:22px; text-align:center; padding:14px 18px; border-radius:40px; border:none; width:min(280px,100%); outline:none; letter-spacing:.2em; }
+  #gate button, .btn-pill { margin-top:16px; font-size:18px; font-weight:700; padding:14px 36px; border-radius:40px; border:2px solid #fff; background:transparent; color:#fff; }
+  #err { color:#fff; margin-top:14px; min-height:22px; font-weight:600; }
+  .shake { animation:shake .4s; } @keyframes shake { 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+  /* app */
+  #app { justify-content:flex-start; padding:12px 16px 20px; }
+  header { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; padding:4px 4px 12px; }
+  .logo { font-size:26px; font-weight:900; background:linear-gradient(135deg,var(--pink),var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .counter { font-size:13px; opacity:.6; }
+  #deck { position:relative; width:100%; max-width:420px; flex:1; max-height:640px; }
+  .card { position:absolute; inset:0; border-radius:18px; overflow:hidden; background:#222 center/cover no-repeat; box-shadow:0 10px 30px rgba(0,0,0,.5); touch-action:none; user-select:none; will-change:transform; }
+  .card .shade { position:absolute; inset:0; background:linear-gradient(transparent 55%,rgba(0,0,0,.85)); }
+  .card .info { position:absolute; left:18px; right:18px; bottom:18px; }
+  .card .info h2 { font-size:30px; font-weight:800; } .card .info h2 span { font-weight:400; }
+  .card .info p { opacity:.9; margin-top:4px; font-size:15px; line-height:1.35; }
+  .card .dist { font-size:13px; opacity:.75; margin-top:6px; }
+  .stamp { position:absolute; top:40px; font-size:38px; font-weight:900; padding:4px 12px; border:5px solid; border-radius:10px; opacity:0; text-transform:uppercase; }
+  .stamp.like { left:24px; color:#4be0a0; transform:rotate(-18deg); }
+  .stamp.nope { right:24px; color:#ff4a6b; transform:rotate(18deg); }
+  .placeholder { display:flex; align-items:center; justify-content:center; font-size:120px; }
+  .controls { display:flex; gap:22px; margin-top:18px; }
+  .controls button { width:64px; height:64px; border-radius:50%; border:none; background:#222; font-size:28px; box-shadow:0 4px 14px rgba(0,0,0,.5); transition:transform .15s; }
+  .controls button:active { transform:scale(.88); }
+  .controls .big { width:74px; height:74px; font-size:34px; }
+  /* overlays */
+  .overlay { position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; background:rgba(0,0,0,.88); }
+  .overlay h1 { font-size:48px; font-style:italic; font-weight:900; background:linear-gradient(135deg,#4be0a0,#2bc0e4); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:10px; }
+  .overlay p { opacity:.9; max-width:320px; }
+  .avatars { display:flex; gap:-10px; margin:26px 0; } .avatars div { width:110px; height:110px; border-radius:50%; border:4px solid #fff; background:#333 center/cover; display:flex; align-items:center; justify-content:center; font-size:50px; } .avatars div+div { margin-left:-16px; }
+  #nopeModal h2 { font-size:28px; margin-bottom:10px; }
+  .heart { position:fixed; font-size:28px; pointer-events:none; z-index:30; animation:fly 1.6s ease-out forwards; }
+  @keyframes fly { to { transform:translateY(-70vh) scale(1.8); opacity:0; } }
+</style>
+</head>
+<body>
+
+<!-- ============ VSTUPNÍ BRÁNA ============ -->
+<div id="gate" class="screen grad">
+  <h1>🔥 Jenom Já</h1>
+  <p>Seznamka s nejlepším výběrem na světě.<br>(Výběr: 1 osoba.)</p>
+  <input id="code" type="password" inputmode="text" placeholder="tajný kód" autocomplete="off">
+  <button onclick="tryCode()">Vstoupit</button>
+  <div id="err"></div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="screen hidden">
+  <header>
+    <div class="logo">jenom já</div>
+    <div class="counter" id="counter"></div>
+  </header>
+  <div id="deck"></div>
+  <div class="controls">
+    <button onclick="swipe(-1)" title="Ne">❌</button>
+    <button class="big" onclick="superLike()" title="Super like">⭐</button>
+    <button onclick="swipe(1)" title="Ano">💚</button>
+  </div>
+</div>
+
+<div id="matchModal" class="overlay hidden">
+  <h1>It's a Match!</h1>
+  <p id="matchText"></p>
+  <div class="avatars"><div>😍</div><div id="matchAvatar"></div></div>
+  <button class="btn-pill" onclick="closeModal('matchModal')">Swipovat dál</button>
+</div>
+
+<div id="nopeModal" class="overlay hidden">
+  <h2 id="nopeTitle"></h2>
+  <p id="nopeText"></p>
+  <button class="btn-pill grad" style="border:none" onclick="closeModal('nopeModal')">Dobře, promiň 🥺</button>
+</div>
+
+<script>
+/* ================= NASTAVENÍ – tohle si uprav ================= */
+const SECRET_CODE = "miluju";          // kód, který jí pošleš (malá písmena)
+const NAME = "Kade";                   // jméno na kartičkách
+const AGE  = 25;
+
+// Fotky nahraj do složky "fotky/" a sem napiš jejich názvy + popisky.
+// Dokud tu nic nebude, ukážou se emoji místo fotek.
+const PROFILES = [
+  { foto: "fotky/1.jpg", bio: "Fotograf. Mám rád dlouhé procházky… k lednici.", km: 0.2 },
+  { foto: "fotky/2.jpg", bio: "Hledám někoho, kdo mi bude říkat, že jsem hezkej.", km: 0.1 },
+  { foto: "fotky/3.jpg", bio: "Varím těstoviny na 3 způsoby. Všechny jsou stejný.", km: 0.3 },
+  { foto: "fotky/4.jpg", bio: "Červená vlajka: žádná. Zelená vlajka: všechny.", km: 0 },
+  { foto: "fotky/5.jpg", bio: "Jediný kluk v celé aplikaci. Náhoda? Nemyslím si.", km: 0.05 },
+];
+/* ============================================================== */
+
+const EMOJI = ["😎","🤳","🧔","🫶","📸","🕺","🥰","🤠"];
+const MATCH_TEXTS = [
+  `Ty a ${NAME} jste se navzájem lajkli. Šokující.`,
+  `Shoda 100 %. Algoritmus nikdy nelže.`,
+  `${NAME} tě lajknul už před 3 lety.`,
+  `Gratulujeme! Zase on. Pořád on.`,
+  `Další match. Tohle už je osud. 💍`,
+];
+const NOPE = [
+  ["Tos asi nechtěla 🤨", "Palec ti sklouzl, že jo? Dáme to znovu."],
+  ["Chyba systému ⚠️", "Swipe doleva není v téhle aplikaci podporovaný."],
+  ["Opravdu?! 😢", `${NAME} teď sedí v rohu a smutně kouká na zeď.`],
+  ["Nope na nope 🙅", "Tvůj nope byl zamítnut. Zkus to doprava."],
+  ["Hmm…", "Jiní kluci tady stejně nejsou. Jen tak mimochodem."],
+];
+let idx = 0, matches = 0, nopes = 0;
+
+/* ---- brána ---- */
+const codeInp = document.getElementById("code");
+codeInp.addEventListener("keydown", e => { if (e.key === "Enter") tryCode(); });
+function tryCode() {
+  if (codeInp.value.trim().toLowerCase() === SECRET_CODE) {
+    try { sessionStorage.setItem("jj_ok", "1"); } catch(e){}
+    openApp();
+  } else {
+    const g = document.getElementById("gate");
+    document.getElementById("err").textContent = "Špatný kód. Tohle je jen pro jednu osobu 😌";
+    g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
+  }
+}
+function openApp() {
+  document.getElementById("gate").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  renderDeck();
+}
+try { if (sessionStorage.getItem("jj_ok")) openApp(); } catch(e){}
+
+/* ---- karty ---- */
+const deck = document.getElementById("deck");
+function profile(i) { return PROFILES[((i % PROFILES.length) + PROFILES.length) % PROFILES.length]; }
+
+function makeCard(i) {
+  const p = profile(i);
+  const c = document.createElement("div");
+  c.className = "card";
+  const em = EMOJI[i % EMOJI.length];
+  const img = new Image();
+  img.onload = () => { c.style.backgroundImage = `url('${p.foto}')`; c.classList.remove("placeholder"); c.firstChild.nodeType===3 && c.firstChild.remove(); };
+  img.src = p.foto;
+  c.classList.add("placeholder");
+  c.innerHTML = `${em}<div class="shade"></div>
+    <div class="stamp like">Ano</div><div class="stamp nope">Ne</div>
+    <div class="info"><h2>${NAME} <span>${AGE}</span></h2><p>${p.bio}</p>
+    <div class="dist">📍 ${p.km} km od tebe</div></div>`;
+  return c;
+}
+
+function renderDeck() {
+  deck.innerHTML = "";
+  deck.appendChild(makeCard(idx + 1));         // spodní
+  const top = makeCard(idx);
+  deck.appendChild(top);
+  bindDrag(top);
+  document.getElementById("counter").textContent = `💚 ${matches} matchů · zbývá ∞ ${NAME}ů`;
+}
+
+function bindDrag(card) {
+  let sx = 0, sy = 0, dx = 0, dy = 0, drag = false;
+  const like = card.querySelector(".like"), nope = card.querySelector(".nope");
+  card.addEventListener("pointerdown", e => { drag = true; sx = e.clientX; sy = e.clientY; card.setPointerCapture(e.pointerId); card.style.transition = "none"; });
+  card.addEventListener("pointermove", e => {
+    if (!drag) return;
+    dx = e.clientX - sx; dy = e.clientY - sy;
+    card.style.transform = `translate(${dx}px,${dy}px) rotate(${dx / 15}deg)`;
+    like.style.opacity = Math.max(0, dx / 100); nope.style.opacity = Math.max(0, -dx / 100);
+  });
+  const end = () => {
+    if (!drag) return; drag = false;
+    if (Math.abs(dx) > 100) swipe(Math.sign(dx));
+    else { card.style.transition = "transform .3s"; card.style.transform = ""; like.style.opacity = nope.style.opacity = 0; }
+    dx = dy = 0;
+  };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+}
+
+function swipe(dir) {
+  const card = deck.lastElementChild; if (!card) return;
+  card.style.transition = "transform .4s ease-out";
+  card.style.transform = `translate(${dir * window.innerWidth * 1.2}px, -40px) rotate(${dir * 30}deg)`;
+  card.querySelector(dir > 0 ? ".like" : ".nope").style.opacity = 1;
+  setTimeout(() => {
+    if (dir > 0) { idx++; matches++; renderDeck(); showMatch(); }
+    else { renderDeck(); showNope(); }   // stejná karta se vrátí 😈
+  }, 350);
+}
+
+function superLike() {
+  for (let i = 0; i < 14; i++) setTimeout(() => {
+    const h = document.createElement("div"); h.className = "heart";
+    h.textContent = ["💖","⭐","💘","😍"][i % 4];
+    h.style.left = Math.random() * 90 + "vw"; h.style.bottom = "10vh";
+    document.body.appendChild(h); setTimeout(() => h.remove(), 1700);
+  }, i * 60);
+  setTimeout(() => swipe(1), 300);
+}
+
+function showMatch() {
+  document.getElementById("matchText").textContent = MATCH_TEXTS[(matches - 1) % MATCH_TEXTS.length];
+  const av = document.getElementById("matchAvatar");
+  const p = profile(idx - 1);
+  av.textContent = EMOJI[(idx - 1) % EMOJI.length]; av.style.backgroundImage = "";
+  const img = new Image(); img.onload = () => { av.textContent = ""; av.style.backgroundImage = `url('${p.foto}')`; }; img.src = p.foto;
+  document.getElementById("matchModal").classList.remove("hidden");
+}
+function showNope() {
+  const [t, x] = NOPE[nopes++ % NOPE.length];
+  document.getElementById("nopeTitle").textContent = t;
+  document.getElementById("nopeText").textContent = x;
+  document.getElementById("nopeModal").classList.remove("hidden");
+}
+function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+</script>
+</body>
+</html>

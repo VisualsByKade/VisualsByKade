@@ -2,229 +2,348 @@
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Jenom Já 💘</title>
+<meta name="theme-color" content="#0e0e12">
+<title>Jenom Ondra 🔥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --pink:#fd297b; --orange:#ff655b; --bg:#111; }
+  :root {
+    --c1:#ff3d7f; --c2:#ff7a59; --like:#2fe0a2; --nope:#ff4d6d; --star:#3bb4ff;
+    --bg:#0e0e12; --panel:#17171d; --line:rgba(255,255,255,.08); --muted:rgba(255,255,255,.6);
+    --grad:linear-gradient(135deg,var(--c1),var(--c2));
+  }
   * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html,body { height:100%; background:var(--bg); color:#fff; font-family:system-ui,-apple-system,sans-serif; overflow:hidden; }
-  .grad { background:linear-gradient(135deg,var(--pink),var(--orange)); }
-  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+  html,body { height:100%; }
+  body { background:var(--bg); color:#fff; font-family:'Plus Jakarta Sans',system-ui,sans-serif; overflow:hidden; }
+  button { font:inherit; color:inherit; cursor:pointer; border:none; background:none; }
   .hidden { display:none !important; }
-  /* gate */
-  #gate h1 { font-size:42px; font-weight:900; margin-bottom:6px; }
-  #gate p { opacity:.85; margin-bottom:28px; text-align:center; }
-  #gate input { font-size:22px; text-align:center; padding:14px 18px; border-radius:40px; border:none; width:min(280px,100%); outline:none; letter-spacing:.2em; }
-  #gate button, .btn-pill { margin-top:16px; font-size:18px; font-weight:700; padding:14px 36px; border-radius:40px; border:2px solid #fff; background:transparent; color:#fff; }
-  #err { color:#fff; margin-top:14px; min-height:22px; font-weight:600; }
-  .shake { animation:shake .4s; } @keyframes shake { 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-  /* app */
-  #app { justify-content:flex-start; padding:12px 16px 20px; }
-  header { width:100%; max-width:420px; display:flex; justify-content:space-between; align-items:center; padding:4px 4px 12px; }
-  .logo { font-size:26px; font-weight:900; background:linear-gradient(135deg,var(--pink),var(--orange)); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  .counter { font-size:13px; opacity:.6; }
-  #deck { position:relative; width:100%; max-width:420px; flex:1; max-height:640px; }
-  .card { position:absolute; inset:0; border-radius:18px; overflow:hidden; background:#222 center/cover no-repeat; box-shadow:0 10px 30px rgba(0,0,0,.5); touch-action:none; user-select:none; will-change:transform; }
-  .card .shade { position:absolute; inset:0; background:linear-gradient(transparent 55%,rgba(0,0,0,.85)); }
-  .card .info { position:absolute; left:18px; right:18px; bottom:18px; }
-  .card .info h2 { font-size:30px; font-weight:800; } .card .info h2 span { font-weight:400; }
-  .card .info p { opacity:.9; margin-top:4px; font-size:15px; line-height:1.35; }
-  .card .dist { font-size:13px; opacity:.75; margin-top:6px; }
-  .stamp { position:absolute; top:40px; font-size:38px; font-weight:900; padding:4px 12px; border:5px solid; border-radius:10px; opacity:0; text-transform:uppercase; }
-  .stamp.like { left:24px; color:#4be0a0; transform:rotate(-18deg); }
-  .stamp.nope { right:24px; color:#ff4a6b; transform:rotate(18deg); }
-  .placeholder { display:flex; align-items:center; justify-content:center; font-size:120px; }
-  .controls { display:flex; gap:22px; margin-top:18px; }
-  .controls button { width:64px; height:64px; border-radius:50%; border:none; background:#222; font-size:28px; box-shadow:0 4px 14px rgba(0,0,0,.5); transition:transform .15s; }
-  .controls button:active { transform:scale(.88); }
-  .controls .big { width:74px; height:74px; font-size:34px; }
-  /* overlays */
-  .overlay { position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; background:rgba(0,0,0,.88); }
-  .overlay h1 { font-size:48px; font-style:italic; font-weight:900; background:linear-gradient(135deg,#4be0a0,#2bc0e4); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:10px; }
-  .overlay p { opacity:.9; max-width:320px; }
-  .avatars { display:flex; gap:-10px; margin:26px 0; } .avatars div { width:110px; height:110px; border-radius:50%; border:4px solid #fff; background:#333 center/cover; display:flex; align-items:center; justify-content:center; font-size:50px; } .avatars div+div { margin-left:-16px; }
-  #nopeModal h2 { font-size:28px; margin-bottom:10px; }
-  .heart { position:fixed; font-size:28px; pointer-events:none; z-index:30; animation:fly 1.6s ease-out forwards; }
-  @keyframes fly { to { transform:translateY(-70vh) scale(1.8); opacity:0; } }
+
+  /* ======== BRÁNA ======== */
+  #gate { position:fixed; inset:0; display:grid; place-items:center; padding:24px; overflow:hidden;
+    background:radial-gradient(circle at 20% 15%,#ff3d7f 0,transparent 45%),radial-gradient(circle at 85% 85%,#ff9a3d 0,transparent 45%),#ff5a6e; }
+  #gate::before { content:""; position:absolute; inset:-50%; background:radial-gradient(circle,rgba(255,255,255,.18) 0,transparent 40%); animation:float 9s ease-in-out infinite alternate; }
+  @keyframes float { to { transform:translate(20%,15%); } }
+  .gate-box { position:relative; width:min(360px,100%); text-align:center; padding:40px 28px 32px; border-radius:32px;
+    background:rgba(255,255,255,.14); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border:1px solid rgba(255,255,255,.3);
+    box-shadow:0 30px 60px rgba(120,0,40,.35); animation:pop .6s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { from { transform:scale(.85); opacity:0; } }
+  .flame { width:64px; height:64px; margin:0 auto 14px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.2)); animation:beat 1.6s ease-in-out infinite; }
+  @keyframes beat { 50% { transform:scale(1.08); } }
+  .gate-box h1 { font-size:34px; font-weight:800; letter-spacing:-.02em; }
+  .gate-box .sub { margin:8px 0 26px; line-height:1.45; opacity:.92; font-size:15px; }
+  .gate-box .sub b { font-weight:700; }
+  #code { width:100%; font:inherit; font-size:20px; font-weight:600; text-align:center; letter-spacing:.25em; padding:16px; border-radius:18px; border:none; outline:none;
+    background:#fff; color:#222; box-shadow:inset 0 0 0 2px transparent; transition:box-shadow .2s; }
+  #code:focus { box-shadow:inset 0 0 0 2px #ff3d7f; }
+  #code::placeholder { letter-spacing:.05em; color:#aaa; font-weight:500; }
+  .gate-btn { width:100%; margin-top:12px; padding:16px; border-radius:18px; font-weight:800; font-size:17px; background:#1a1a22; color:#fff; transition:transform .15s; }
+  .gate-btn:active { transform:scale(.97); }
+  #err { min-height:22px; margin-top:14px; font-size:14px; font-weight:600; }
+  .fine { margin-top:6px; font-size:12px; opacity:.7; }
+  .shake { animation:shake .45s; } @keyframes shake { 20%,60%{transform:translateX(-10px)} 40%,80%{transform:translateX(10px)} }
+
+  /* ======== APP ======== */
+  #app { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; padding:max(12px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+    background:radial-gradient(ellipse at top,#2a1520 0,var(--bg) 60%); }
+  .phone { width:100%; max-width:420px; height:100%; max-height:860px; display:flex; flex-direction:column; align-items:center; }
+  header { width:100%; display:flex; align-items:center; justify-content:space-between; padding:4px 2px 14px; }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:800; font-size:24px; letter-spacing:-.03em; }
+  .brand svg { width:28px; height:28px; }
+  .brand span { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .pill { display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:99px; background:var(--panel); border:1px solid var(--line); font-size:13px; font-weight:700; }
+  .pill .n { background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  #deck { position:relative; width:100%; flex:1; min-height:0; }
+  .card { position:absolute; inset:0; border-radius:26px; overflow:hidden; background:#1d1d25; touch-action:none; user-select:none; -webkit-user-select:none;
+    box-shadow:0 18px 40px rgba(0,0,0,.55); will-change:transform; transform-origin:50% 100%; }
+  .card.back { transform:scale(.94) translateY(14px); filter:brightness(.6); transition:transform .35s, filter .35s; }
+  .card .photo { position:absolute; inset:0; background:center/cover no-repeat; }
+  .card .ph { position:absolute; inset:0; display:grid; place-items:center; font-size:130px; background:linear-gradient(160deg,#3a2030,#1b1b26 60%); }
+  .card .bars { position:absolute; top:10px; left:12px; right:12px; display:flex; gap:5px; z-index:2; }
+  .card .bars i { flex:1; height:4px; border-radius:4px; background:rgba(255,255,255,.3); }
+  .card .bars i.on { background:#fff; }
+  .card .shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.25) 0,transparent 18%,transparent 50%,rgba(0,0,0,.92) 100%); }
+  .card .info { position:absolute; left:20px; right:20px; bottom:20px; }
+  .name { display:flex; align-items:center; gap:8px; font-size:32px; font-weight:800; letter-spacing:-.02em; }
+  .name .age { font-weight:500; opacity:.95; }
+  .name svg { width:24px; height:24px; flex:none; }
+  .meta { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:14px; color:rgba(255,255,255,.85); }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--like); box-shadow:0 0 0 3px rgba(47,224,162,.25); }
+  .bio { margin-top:10px; font-size:15px; line-height:1.4; }
+  .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+  .tags span { padding:6px 11px; border-radius:99px; font-size:12.5px; font-weight:600; background:rgba(255,255,255,.16); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.15); }
+  .stamp { position:absolute; top:58px; z-index:3; padding:6px 14px; border:5px solid; border-radius:14px; font-size:40px; font-weight:800; letter-spacing:.04em; opacity:0; text-transform:uppercase; }
+  .stamp.like { left:22px; color:var(--like); transform:rotate(-16deg); }
+  .stamp.nope { right:22px; color:var(--nope); transform:rotate(16deg); }
+  .stamp.super { left:50%; top:auto; bottom:190px; color:var(--star); transform:translateX(-50%) rotate(-8deg); }
+
+  .controls { display:flex; align-items:center; justify-content:center; gap:20px; padding:18px 0 4px; }
+  .cbtn { width:62px; height:62px; border-radius:50%; display:grid; place-items:center; background:var(--panel); border:1px solid var(--line);
+    box-shadow:0 8px 20px rgba(0,0,0,.45); transition:transform .15s, background .2s; }
+  .cbtn svg { width:28px; height:28px; }
+  .cbtn.sm { width:50px; height:50px; } .cbtn.sm svg { width:22px; height:22px; }
+  .cbtn:hover { transform:translateY(-2px); }
+  .cbtn:active { transform:scale(.86); }
+  .cbtn.nope:active { background:var(--nope); } .cbtn.like:active { background:var(--like); } .cbtn.star:active { background:var(--star); }
+  .cbtn:active svg * { stroke:#fff; fill:none; }
+  .cbtn.like:active svg path { fill:#fff; }
+
+  /* ======== OVERLAYS ======== */
+  .overlay { position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:24px; text-align:center;
+    background:rgba(10,10,14,.82); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); animation:fade .25s; }
+  @keyframes fade { from { opacity:0; } }
+  .ov-in { width:min(380px,100%); display:flex; flex-direction:column; align-items:center; animation:pop .5s cubic-bezier(.2,1.4,.4,1); }
+  .match-title { font-size:52px; line-height:1; font-weight:800; font-style:italic; letter-spacing:-.03em;
+    background:linear-gradient(135deg,#2fe0a2,#3bb4ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .ov-in p { margin-top:12px; color:rgba(255,255,255,.85); line-height:1.45; }
+  .avatars { display:flex; justify-content:center; margin:30px 0 32px; }
+  .av { width:120px; height:120px; border-radius:50%; border:4px solid #fff; display:grid; place-items:center; font-size:54px; background:#2a2a33 center/cover; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+  .av:first-child { transform:rotate(-8deg); animation:slideL .6s cubic-bezier(.2,1.3,.4,1); }
+  .av:last-child { margin-left:-22px; transform:rotate(8deg); animation:slideR .6s cubic-bezier(.2,1.3,.4,1); }
+  @keyframes slideL { from { transform:translateX(-120px) rotate(-30deg); opacity:0; } }
+  @keyframes slideR { from { transform:translateX(120px) rotate(30deg); opacity:0; } }
+  .btn { width:100%; padding:16px; border-radius:99px; font-weight:800; font-size:16px; margin-top:10px; transition:transform .15s; }
+  .btn:active { transform:scale(.97); }
+  .btn.primary { background:var(--grad); box-shadow:0 10px 24px rgba(255,61,127,.35); }
+  .btn.ghost { border:1.5px solid rgba(255,255,255,.35); }
+  .big-emoji { font-size:76px; margin-bottom:12px; animation:wob 1s ease-in-out infinite; }
+  @keyframes wob { 25%{transform:rotate(-10deg)} 75%{transform:rotate(10deg)} }
+  .nope-title { font-size:30px; font-weight:800; letter-spacing:-.02em; }
+  .toast { position:fixed; left:50%; bottom:120px; transform:translateX(-50%); z-index:40; padding:12px 18px; border-radius:99px; background:#fff; color:#111; font-weight:700; font-size:14px; white-space:nowrap; animation:toast 2.4s forwards; box-shadow:0 10px 30px rgba(0,0,0,.4); }
+  @keyframes toast { 0%{opacity:0;transform:translate(-50%,20px)} 12%,80%{opacity:1;transform:translate(-50%,0)} 100%{opacity:0} }
+  .fx { position:fixed; pointer-events:none; z-index:30; font-size:30px; animation:fly 1.8s cubic-bezier(.2,.6,.4,1) forwards; }
+  @keyframes fly { to { transform:translate(var(--x),-75vh) rotate(var(--r)) scale(1.6); opacity:0; } }
 </style>
 </head>
 <body>
 
-<!-- ============ VSTUPNÍ BRÁNA ============ -->
-<div id="gate" class="screen grad">
-  <h1>🔥 Jenom Já</h1>
-  <p>Seznamka s nejlepším výběrem na světě.<br>(Výběr: 1 osoba.)</p>
-  <input id="code" type="password" inputmode="text" placeholder="tajný kód" autocomplete="off">
-  <button onclick="tryCode()">Vstoupit</button>
-  <div id="err"></div>
-</div>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d7f"/><stop offset="1" stop-color="#ff7a59"/></linearGradient>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path fill="url(#g)" d="M12 2c.5 3.2-1.3 5-2.8 6.6C7.7 10.2 6 12 6 14.8 6 18.8 8.7 22 12 22s6-3 6-7c0-2.6-1.2-4.4-2.4-5.6.1 1.6-.5 2.9-1.6 3.4.3-3.8-.8-7.6-2-10.8z"/></symbol>
+  </defs>
+</svg>
 
-<!-- ============ APP ============ -->
-<div id="app" class="screen hidden">
-  <header>
-    <div class="logo">jenom já</div>
-    <div class="counter" id="counter"></div>
-  </header>
-  <div id="deck"></div>
-  <div class="controls">
-    <button onclick="swipe(-1)" title="Ne">❌</button>
-    <button class="big" onclick="superLike()" title="Super like">⭐</button>
-    <button onclick="swipe(1)" title="Ano">💚</button>
+<!-- ======== BRÁNA ======== -->
+<div id="gate">
+  <div class="gate-box" id="gateBox">
+    <svg class="flame" viewBox="0 0 24 24"><path fill="#fff" d="M12 2c.5 3.2-1.3 5-2.8 6.6C7.7 10.2 6 12 6 14.8 6 18.8 8.7 22 12 22s6-3 6-7c0-2.6-1.2-4.4-2.4-5.6.1 1.6-.5 2.9-1.6 3.4.3-3.8-.8-7.6-2-10.8z"/></svg>
+    <h1>jenom Ondra</h1>
+    <p class="sub">Seznamka s nejlepším výběrem na světě.<br><b>Počet profilů: 1.</b> Kvalita: 100 %.</p>
+    <input id="code" type="password" placeholder="tajný kód" autocomplete="off" autocapitalize="off">
+    <button class="gate-btn" onclick="tryCode()">Vstoupit 💘</button>
+    <div id="err"></div>
+    <div class="fine">Přístup jen pro jednu vyvolenou.</div>
   </div>
 </div>
 
-<div id="matchModal" class="overlay hidden">
-  <h1>It's a Match!</h1>
-  <p id="matchText"></p>
-  <div class="avatars"><div>😍</div><div id="matchAvatar"></div></div>
-  <button class="btn-pill" onclick="closeModal('matchModal')">Swipovat dál</button>
+<!-- ======== APP ======== -->
+<div id="app" class="hidden">
+  <div class="phone">
+    <header>
+      <div class="brand"><svg><use href="#i-flame"/></svg><span>jenom ondra</span></div>
+      <div class="pill">💚 <span class="n" id="mcount">0</span> <span id="mword">matchů</span></div>
+    </header>
+    <div id="deck"></div>
+    <div class="controls">
+      <button class="cbtn sm" onclick="rewind()" title="Zpět" aria-label="Zpět">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ffc53d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+      <button class="cbtn nope" onclick="swipe(-1)" title="Ne" aria-label="Ne">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff4d6d" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button class="cbtn sm star" onclick="superLike()" title="Super like" aria-label="Super like">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#3bb4ff" stroke-width="2.4" stroke-linejoin="round"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>
+      </button>
+      <button class="cbtn like" onclick="swipe(1)" title="Ano" aria-label="Ano">
+        <svg viewBox="0 0 24 24"><path fill="#2fe0a2" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.9 4.4 7.3C19.5 16.4 12 21 12 21z"/></svg>
+      </button>
+      <button class="cbtn sm" onclick="boost()" title="Boost" aria-label="Boost">
+        <svg viewBox="0 0 24 24"><path fill="#b44dff" d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+      </button>
+    </div>
+  </div>
 </div>
 
+<!-- match -->
+<div id="matchModal" class="overlay hidden">
+  <div class="ov-in">
+    <div class="match-title">It's a<br>Match!</div>
+    <p id="matchText"></p>
+    <div class="avatars"><div class="av">😍</div><div class="av" id="matchAvatar"></div></div>
+    <button class="btn primary" onclick="sendMsg()">Napsat Ondrovi 💬</button>
+    <button class="btn ghost" onclick="closeModal('matchModal')">Swipovat dál</button>
+  </div>
+</div>
+
+<!-- swipe doleva -->
 <div id="nopeModal" class="overlay hidden">
-  <h2 id="nopeTitle"></h2>
-  <p id="nopeText"></p>
-  <button class="btn-pill grad" style="border:none" onclick="closeModal('nopeModal')">Dobře, promiň 🥺</button>
+  <div class="ov-in">
+    <div class="big-emoji" id="nopeEmoji">🥺</div>
+    <div class="nope-title" id="nopeTitle"></div>
+    <p id="nopeText"></p>
+    <button class="btn primary" style="margin-top:26px" onclick="closeModal('nopeModal')">Dobře, promiň 🥺</button>
+  </div>
 </div>
 
 <script>
 /* ================= NASTAVENÍ – tohle si uprav ================= */
-const SECRET_CODE = "miluju";          // kód, který jí pošleš (malá písmena)
-const NAME = "Kade";                   // jméno na kartičkách
+const SECRET_CODE = "miluju";   // kód pro přítelkyni (malými písmeny)
+const NAME = "Ondra";
 const AGE  = 25;
 
-// Fotky nahraj do složky "fotky/" a sem napiš jejich názvy + popisky.
-// Dokud tu nic nebude, ukážou se emoji místo fotek.
+// Fotky dej do složky "fotky/" a sem napiš názvy + popisky.
+// Dokud tam nejsou, zobrazí se místo nich emoji.
 const PROFILES = [
-  { foto: "fotky/1.jpg", bio: "Fotograf. Mám rád dlouhé procházky… k lednici.", km: 0.2 },
-  { foto: "fotky/2.jpg", bio: "Hledám někoho, kdo mi bude říkat, že jsem hezkej.", km: 0.1 },
-  { foto: "fotky/3.jpg", bio: "Varím těstoviny na 3 způsoby. Všechny jsou stejný.", km: 0.3 },
-  { foto: "fotky/4.jpg", bio: "Červená vlajka: žádná. Zelená vlajka: všechny.", km: 0 },
-  { foto: "fotky/5.jpg", bio: "Jediný kluk v celé aplikaci. Náhoda? Nemyslím si.", km: 0.05 },
+  { foto:"fotky/1.jpg", bio:"Hledám někoho, kdo mi bude říkat, že jsem hezkej. Tebe.", tags:["📸 Fotograf","☕ Káva","🐶 Pejskař"], km:0.2 },
+  { foto:"fotky/2.jpg", bio:"Mám rád dlouhé procházky… k lednici a zpátky.", tags:["🍕 Pizza","🎮 Hry","🛋️ Gauč"], km:0.1 },
+  { foto:"fotky/3.jpg", bio:"Uvařím těstoviny na 3 způsoby. Všechny jsou stejný.", tags:["🍝 Šéfkuchař","🍷 Víno"], km:0.3 },
+  { foto:"fotky/4.jpg", bio:"Red flags: žádný. Green flags: všechny.", tags:["🟢 Green flag","💯 Ověřeno"], km:0 },
+  { foto:"fotky/5.jpg", bio:"Jediný kluk v celé aplikaci. Náhoda? Nemyslím si.", tags:["👑 Jediný","🔥 Hot"], km:0.05 },
 ];
 /* ============================================================== */
 
-const EMOJI = ["😎","🤳","🧔","🫶","📸","🕺","🥰","🤠"];
+const EMOJI = ["😎","🤳","🫶","📸","🕺","🥰","🤠","😏"];
 const MATCH_TEXTS = [
-  `Ty a ${NAME} jste se navzájem lajkli. Šokující.`,
+  `Ty a ${NAME} jste se navzájem lajkli. Šokující zvrat.`,
   `Shoda 100 %. Algoritmus nikdy nelže.`,
-  `${NAME} tě lajknul už před 3 lety.`,
-  `Gratulujeme! Zase on. Pořád on.`,
+  `${NAME} tě lajknul už dávno. Jen čekal, až se ozveš.`,
+  `Gratulujeme! Zase ${NAME}. Pořád ${NAME}. Navždy ${NAME}.`,
   `Další match. Tohle už je osud. 💍`,
+  `Statistika: 100 % tvých matchů je ${NAME}. Gratulujeme k vkusu.`,
 ];
 const NOPE = [
-  ["Tos asi nechtěla 🤨", "Palec ti sklouzl, že jo? Dáme to znovu."],
-  ["Chyba systému ⚠️", "Swipe doleva není v téhle aplikaci podporovaný."],
-  ["Opravdu?! 😢", `${NAME} teď sedí v rohu a smutně kouká na zeď.`],
-  ["Nope na nope 🙅", "Tvůj nope byl zamítnut. Zkus to doprava."],
-  ["Hmm…", "Jiní kluci tady stejně nejsou. Jen tak mimochodem."],
+  ["🤨","Tos asi nechtěla","Palec ti sklouzl, že jo? Nevadí, dáme to znovu."],
+  ["⚠️","Chyba systému","Swipe doleva v téhle aplikaci není podporovaný."],
+  ["😢","Opravdu?!",`${NAME} teď sedí v rohu a smutně kouká do zdi.`],
+  ["🙅","Tvůj nope byl zamítnut","Zkus to doprava, tam to funguje líp."],
+  ["🧐","Hmm…","Jiní kluci tady stejně nejsou. Jen tak mimochodem."],
+  ["📉","Ondrovi kleslo sebevědomí","Napravit to jde jedině swipem doprava."],
 ];
-let idx = 0, matches = 0, nopes = 0;
+const REPLIES = [`${NAME} píše… ✍️ „Konečně ses ozvala 😏“`, `${NAME}: „Ahoj krásko, přijď na pusu“`, `${NAME}: „Tak kdy rande? Dneska?“`, `${NAME}: „Věděl jsem, že neodoláš 😎“`];
+let idx = 0, matches = 0, nopes = 0, replyI = 0, busy = false;
+const $ = id => document.getElementById(id);
 
 /* ---- brána ---- */
-const codeInp = document.getElementById("code");
-codeInp.addEventListener("keydown", e => { if (e.key === "Enter") tryCode(); });
+$("code").addEventListener("keydown", e => { if (e.key === "Enter") tryCode(); });
 function tryCode() {
-  if (codeInp.value.trim().toLowerCase() === SECRET_CODE) {
-    try { sessionStorage.setItem("jj_ok", "1"); } catch(e){}
+  if ($("code").value.trim().toLowerCase() === SECRET_CODE) {
+    try { sessionStorage.setItem("jo_ok","1"); } catch(e){}
     openApp();
   } else {
-    const g = document.getElementById("gate");
-    document.getElementById("err").textContent = "Špatný kód. Tohle je jen pro jednu osobu 😌";
-    g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
+    $("err").textContent = "Špatný kód. Tohle není pro každou 😌";
+    const g = $("gateBox"); g.classList.remove("shake"); void g.offsetWidth; g.classList.add("shake");
   }
 }
-function openApp() {
-  document.getElementById("gate").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  renderDeck();
-}
-try { if (sessionStorage.getItem("jj_ok")) openApp(); } catch(e){}
+function openApp() { $("gate").classList.add("hidden"); $("app").classList.remove("hidden"); renderDeck(); }
+try { if (sessionStorage.getItem("jo_ok")) openApp(); } catch(e){}
 
 /* ---- karty ---- */
-const deck = document.getElementById("deck");
-function profile(i) { return PROFILES[((i % PROFILES.length) + PROFILES.length) % PROFILES.length]; }
+const deck = $("deck");
+const mod = i => ((i % PROFILES.length) + PROFILES.length) % PROFILES.length;
+const profile = i => PROFILES[mod(i)];
+
+function loadPhoto(el, src, onOk) { const im = new Image(); im.onload = () => onOk(src); im.src = src; }
 
 function makeCard(i) {
-  const p = profile(i);
-  const c = document.createElement("div");
+  const p = profile(i), c = document.createElement("div");
   c.className = "card";
-  const em = EMOJI[i % EMOJI.length];
-  const img = new Image();
-  img.onload = () => { c.style.backgroundImage = `url('${p.foto}')`; c.classList.remove("placeholder"); c.firstChild.nodeType===3 && c.firstChild.remove(); };
-  img.src = p.foto;
-  c.classList.add("placeholder");
-  c.innerHTML = `${em}<div class="shade"></div>
-    <div class="stamp like">Ano</div><div class="stamp nope">Ne</div>
-    <div class="info"><h2>${NAME} <span>${AGE}</span></h2><p>${p.bio}</p>
-    <div class="dist">📍 ${p.km} km od tebe</div></div>`;
+  const bars = PROFILES.map((_, k) => `<i class="${k === mod(i) ? "on" : ""}"></i>`).join("");
+  c.innerHTML = `
+    <div class="ph">${EMOJI[mod(i) % EMOJI.length]}</div><div class="photo"></div>
+    <div class="bars">${bars}</div><div class="shade"></div>
+    <div class="stamp like">Ano</div><div class="stamp nope">Ne</div><div class="stamp super">Super</div>
+    <div class="info">
+      <div class="name">${NAME} <span class="age">${AGE}</span>
+        <svg viewBox="0 0 24 24"><path fill="#3bb4ff" d="M12 1l2.6 2.3 3.4-.4.9 3.3 3 1.7-1.2 3.2 1.2 3.2-3 1.7-.9 3.3-3.4-.4L12 23l-2.6-2.3-3.4.4-.9-3.3-3-1.7 1.2-3.2L2.1 9.6l3-1.7.9-3.3 3.4.4z"/><path d="M8 12.2l2.6 2.6L16 9.4" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="meta"><span class="dot"></span> Online teď · 📍 ${p.km} km od tebe</div>
+      <div class="bio">${p.bio}</div>
+      <div class="tags">${(p.tags || []).map(t => `<span>${t}</span>`).join("")}</div>
+    </div>`;
+  loadPhoto(c, p.foto, src => { c.querySelector(".photo").style.backgroundImage = `url('${src}')`; c.querySelector(".ph").remove(); });
   return c;
 }
 
 function renderDeck() {
   deck.innerHTML = "";
-  deck.appendChild(makeCard(idx + 1));         // spodní
-  const top = makeCard(idx);
-  deck.appendChild(top);
-  bindDrag(top);
-  document.getElementById("counter").textContent = `💚 ${matches} matchů · zbývá ∞ ${NAME}ů`;
+  const back = makeCard(idx + 1); back.classList.add("back"); deck.appendChild(back);
+  const top = makeCard(idx); deck.appendChild(top); bindDrag(top);
+  $("mcount").textContent = matches;
+  $("mword").textContent = matches === 1 ? "match" : (matches >= 2 && matches <= 4) ? "matche" : "matchů";
+  busy = false;
 }
 
 function bindDrag(card) {
   let sx = 0, sy = 0, dx = 0, dy = 0, drag = false;
-  const like = card.querySelector(".like"), nope = card.querySelector(".nope");
-  card.addEventListener("pointerdown", e => { drag = true; sx = e.clientX; sy = e.clientY; card.setPointerCapture(e.pointerId); card.style.transition = "none"; });
+  const like = card.querySelector(".like"), nope = card.querySelector(".nope"), back = deck.firstElementChild;
+  card.addEventListener("pointerdown", e => { if (busy) return; drag = true; sx = e.clientX; sy = e.clientY; card.setPointerCapture(e.pointerId); card.style.transition = "none"; });
   card.addEventListener("pointermove", e => {
     if (!drag) return;
     dx = e.clientX - sx; dy = e.clientY - sy;
-    card.style.transform = `translate(${dx}px,${dy}px) rotate(${dx / 15}deg)`;
-    like.style.opacity = Math.max(0, dx / 100); nope.style.opacity = Math.max(0, -dx / 100);
+    card.style.transform = `translate(${dx}px,${dy * .4}px) rotate(${dx / 18}deg)`;
+    like.style.opacity = Math.min(1, Math.max(0, dx / 90)); nope.style.opacity = Math.min(1, Math.max(0, -dx / 90));
+    const k = Math.min(1, Math.abs(dx) / 150);
+    back.style.transform = `scale(${.94 + .06 * k}) translateY(${14 - 14 * k}px)`; back.style.filter = `brightness(${.6 + .4 * k})`;
   });
   const end = () => {
     if (!drag) return; drag = false;
     if (Math.abs(dx) > 100) swipe(Math.sign(dx));
-    else { card.style.transition = "transform .3s"; card.style.transform = ""; like.style.opacity = nope.style.opacity = 0; }
+    else { card.style.transition = "transform .4s cubic-bezier(.2,1.4,.4,1)"; card.style.transform = ""; like.style.opacity = nope.style.opacity = 0; back.style.transform = back.style.filter = ""; }
     dx = dy = 0;
   };
   card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
 }
 
-function swipe(dir) {
-  const card = deck.lastElementChild; if (!card) return;
-  card.style.transition = "transform .4s ease-out";
-  card.style.transform = `translate(${dir * window.innerWidth * 1.2}px, -40px) rotate(${dir * 30}deg)`;
-  card.querySelector(dir > 0 ? ".like" : ".nope").style.opacity = 1;
+function swipe(dir, isSuper) {
+  if (busy) return; busy = true;
+  const card = deck.lastElementChild, back = deck.firstElementChild;
+  card.style.transition = "transform .45s cubic-bezier(.3,.6,.3,1)";
+  card.style.transform = isSuper ? `translateY(-130vh) rotate(-6deg)` : `translate(${dir * innerWidth * 1.3}px, -60px) rotate(${dir * 28}deg)`;
+  card.querySelector(isSuper ? ".super" : dir > 0 ? ".like" : ".nope").style.opacity = 1;
+  if (dir > 0) { back.style.transform = "none"; back.style.filter = "none"; }
   setTimeout(() => {
     if (dir > 0) { idx++; matches++; renderDeck(); showMatch(); }
-    else { renderDeck(); showNope(); }   // stejná karta se vrátí 😈
-  }, 350);
+    else { renderDeck(); showNope(); }   // Ondra se vrací 😈
+  }, 380);
 }
 
-function superLike() {
-  for (let i = 0; i < 14; i++) setTimeout(() => {
-    const h = document.createElement("div"); h.className = "heart";
-    h.textContent = ["💖","⭐","💘","😍"][i % 4];
-    h.style.left = Math.random() * 90 + "vw"; h.style.bottom = "10vh";
-    document.body.appendChild(h); setTimeout(() => h.remove(), 1700);
-  }, i * 60);
-  setTimeout(() => swipe(1), 300);
+function burst(chars, n = 18) {
+  for (let i = 0; i < n; i++) setTimeout(() => {
+    const h = document.createElement("div"); h.className = "fx";
+    h.textContent = chars[i % chars.length];
+    h.style.left = 10 + Math.random() * 80 + "vw"; h.style.bottom = "8vh";
+    h.style.setProperty("--x", (Math.random() * 120 - 60) + "px"); h.style.setProperty("--r", (Math.random() * 90 - 45) + "deg");
+    document.body.appendChild(h); setTimeout(() => h.remove(), 1900);
+  }, i * 45);
 }
+function superLike() { if (busy) return; burst(["⭐","💙","✨","💫"]); swipe(1, true); }
+function boost() { burst(["⚡","🔥","💜"], 12); toast(`⚡ Boost aktivní: jsi tu jediná, ${NAME} tě vidí první`); }
+function rewind() { toast(`⏪ Vracet se nemusíš, ${NAME} je i na další kartě`); }
+function toast(t) { document.querySelectorAll(".toast").forEach(x => x.remove()); const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2500); }
 
 function showMatch() {
-  document.getElementById("matchText").textContent = MATCH_TEXTS[(matches - 1) % MATCH_TEXTS.length];
-  const av = document.getElementById("matchAvatar");
-  const p = profile(idx - 1);
-  av.textContent = EMOJI[(idx - 1) % EMOJI.length]; av.style.backgroundImage = "";
-  const img = new Image(); img.onload = () => { av.textContent = ""; av.style.backgroundImage = `url('${p.foto}')`; }; img.src = p.foto;
-  document.getElementById("matchModal").classList.remove("hidden");
+  $("matchText").textContent = MATCH_TEXTS[(matches - 1) % MATCH_TEXTS.length];
+  const av = $("matchAvatar"), p = profile(idx - 1);
+  av.textContent = EMOJI[mod(idx - 1) % EMOJI.length]; av.style.backgroundImage = "";
+  loadPhoto(av, p.foto, src => { av.textContent = ""; av.style.backgroundImage = `url('${src}')`; });
+  const m = $("matchModal"); m.classList.add("hidden"); void m.offsetWidth; m.classList.remove("hidden");
+  burst(["💚","💖","🎉","😍"], 14);
 }
 function showNope() {
-  const [t, x] = NOPE[nopes++ % NOPE.length];
-  document.getElementById("nopeTitle").textContent = t;
-  document.getElementById("nopeText").textContent = x;
-  document.getElementById("nopeModal").classList.remove("hidden");
+  const [e, t, x] = NOPE[nopes++ % NOPE.length];
+  $("nopeEmoji").textContent = e; $("nopeTitle").textContent = t; $("nopeText").textContent = x;
+  $("nopeModal").classList.remove("hidden");
 }
-function closeModal(id) { document.getElementById(id).classList.add("hidden"); }
+function sendMsg() { closeModal("matchModal"); toast(REPLIES[replyI++ % REPLIES.length]); }
+function closeModal(id) { $(id).classList.add("hidden"); }
+
+document.addEventListener("keydown", e => {
+  if ($("app").classList.contains("hidden") || !$("matchModal").classList.contains("hidden") || !$("nopeModal").classList.contains("hidden")) return;
+  if (e.key === "ArrowRight") swipe(1); if (e.key === "ArrowLeft") swipe(-1); if (e.key === "ArrowUp") superLike();
+});
 </script>
 </body>
 </html>

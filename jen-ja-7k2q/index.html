@@ -79,7 +79,7 @@
     <div class="flame">🔥</div>
     <h1>jenom Ondra</h1>
     <p>Seznamka s jediným profilem. Tím nejlepším.</p>
-    <input id="pw" type="password" placeholder="heslo" autocomplete="current-password">
+    <input id="pw" type="text" placeholder="heslo" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <button id="loginBtn" class="btn">Vstoupit 💘</button>
     <div id="err"></div>
   </div>
@@ -150,10 +150,11 @@ $("loginBtn").onclick = login;
 $("logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
 
 async function login() {
-  const pw = $("pw").value.trim().toLowerCase(), acc = ACCOUNTS[pw];
+  const pw = $("pw").value.normalize("NFD").replace(/[^a-zA-Z]/g, "").toLowerCase();
+  const key = pw === "tygr" ? "tiger" : pw, acc = ACCOUNTS[key];
   if (!acc) return $("err").textContent = "Špatné heslo 😌";
   $("err").textContent = "Přihlašuju…";
-  const { error } = await sb.auth.signInWithPassword({ email: acc.email, password: pw + PW_SUFFIX });
+  const { error } = await sb.auth.signInWithPassword({ email: acc.email, password: key + PW_SUFFIX });
   if (error) return $("err").textContent = "Nepovedlo se: " + error.message;
   start();
 }

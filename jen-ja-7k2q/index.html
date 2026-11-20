@@ -37,6 +37,11 @@
   /* swipe */
   #deck { position:relative; flex:1; min-height:0; }
   .card { position:absolute; inset:0; border-radius:24px; overflow:hidden; background:linear-gradient(160deg,#3a2030,#1b1b26 60%) center/cover; touch-action:none; user-select:none; box-shadow:0 16px 36px rgba(0,0,0,.5); display:grid; place-items:center; font-size:120px; }
+  .card .media { position:absolute; inset:0; }
+  .card .media img, .card .media video { width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; }
+  .card .bars { position:absolute; top:10px; left:12px; right:12px; display:flex; gap:5px; z-index:2; }
+  .card .bars i { flex:1; height:4px; border-radius:4px; background:rgba(255,255,255,.35); }
+  .card .bars i.on { background:#fff; }
   .card .shade { position:absolute; inset:0; background:linear-gradient(transparent 50%,rgba(0,0,0,.9)); }
   .card .info { position:absolute; left:20px; right:20px; bottom:20px; font-size:15px; }
   .card h2 { font-size:30px; font-weight:800; }
@@ -125,18 +130,18 @@ const ACCOUNTS = {               // heslo (bez ohledu na velikost písmen) -> ú
   "cukrkanda": { email:"on@jenomondra.app",  role:"on"  },
 };
 const PW_SUFFIX = "-jo2026";     // Supabase chce min. 6 znaků
-const PHOTOS = Array.from({length:10}, (_, i) => `fotky/${i+1}.jpg`);   // Ondrovy fotky na kartách
-const BIOS = [
-  "Nesu chipsy. Jsou pro nás oba. Asi. 🍿",
-  "Zkoušel jsem kalhoty. Sluší mi? Rozhodni ty. 👖",
-  "Jazyk ven = jsem připravený na rande. 😛",
-  "Zahraju ti serenádu. Na kytaru i pod oknem. 🎸",
-  "Romantik. Růži mám vždycky po ruce. Nebo v puse. 🌹",
-  "Volám ti. Zase. Zvedni to. 📞",
-  "Po tréninku. Palec nahoru, jestli taky. 👍",
-  "Usměvavý, hodný, k mání. Teda jen pro tebe.",
-  "Ráno bez kafe. Prosím buď na mě hodná.",
-  "Tajemný kluk v černém. Hledá svou holku.",
+// Profily: každý = 2–4 fotky/videa, kde Ondra vypadá podobně. Ťuknutím vlevo/vpravo na kartě se přepínají.
+const F = n => `fotky/${n}`;
+const PROFILES = [
+  { name:"Ondra Romantik", age:"🌹", media:[F("5.jpg"),F("6.jpg"),F("3.jpg")], bio:"Růži mám vždycky po ruce. Nebo v puse. Volám ti, zvedni to. 📞" },
+  { name:"Ondra Fit", age:"💪", media:[F("23.jpg"),F("video.mp4"),F("24.jpg"),F("22.jpg")], bio:"Po tréninku. Řetízek, sluchátka, sebevědomí. Ukaž mi svůj nejlepší flex. 😏" },
+  { name:"Ondra Stylový", age:"🧥", media:[F("1.jpg"),F("2.jpg"),F("17.jpg")], bio:"Chipsy, rolák, kraťasy. Módní ikona, ať je venku cokoliv." },
+  { name:"Ondra na chatě", age:"🏡", media:[F("12.jpg"),F("15.jpg"),F("14.jpg")], bio:"Dovolená, dřevěný zrcadlo, MOGGED. Pojeď příště se mnou." },
+  { name:"Ondra z předsíně", age:"🚪", media:[F("16.jpg"),F("20.jpg"),F("21.jpg")], bio:"Sako bez trička, tričko s pejskem, vlasy jak ze 2000s. Mám rozsah." },
+  { name:"Ondra Gamer", age:"🎮", media:[F("8.jpg"),F("9.jpg"),F("19.jpg")], bio:"Sedím u počítače a čekám na tvou zprávu. Usměju se, slibuju." },
+  { name:"Ondra Klaun", age:"🤡", media:[F("13.jpg"),F("25.jpg")], bio:"Šéfkuchař s knírem a kluk s vrtulkou. Nuda se mnou nebude." },
+  { name:"Ondra Umělec", age:"🎸", media:[F("4.jpg"),F("18.jpg")], bio:"Zahraju ti na kytaru a pak spolu půjdeme na západ slunce." },
+  { name:"Retro Ondra", age:"📼", media:[F("10.jpg"),F("11.jpg"),F("7.jpg")], bio:"Archivní kousky. Už tehdy jsem věděl, že jednou budu tvůj." },
 ];
 const NOPES = [["Tos asi nechtěla 🤨","Palec ti sklouzl, že jo?"],["Chyba systému ⚠️","Swipe doleva tu není podporovaný."],["Opravdu?! 😢","Ondra teď smutně kouká do zdi."]];
 /* ===================== */
@@ -190,20 +195,35 @@ function route() {
 /* ---------- swipe (jen ona) ---------- */
 function renderCard() {
   const deck = $("deck"); deck.innerHTML = "";
-  const c = document.createElement("div"); c.className = "card";
-  const src = PHOTOS[idx % PHOTOS.length];
-  c.innerHTML = `<span class="ph">😎</span><div class="shade"></div><div class="stamp l">ANO</div><div class="stamp n">NE</div>
-    <div class="info"><h2>Ondra</h2><div>📍 0.1 km od tebe · online</div><div style="margin-top:6px">${BIOS[idx % BIOS.length]}</div></div>`;
-  const im = new Image(); im.onload = () => { c.style.backgroundImage = `url('${src}')`; c.querySelector(".ph").remove(); }; im.src = src;
-  deck.appendChild(c); drag(c);
+  const p = PROFILES[idx % PROFILES.length];
+  const c = document.createElement("div"); c.className = "card"; c.dataset.i = 0;
+  c.innerHTML = `<div class="media"></div><div class="bars">${p.media.map(() => "<i></i>").join("")}</div>
+    <div class="shade"></div><div class="stamp l">ANO</div><div class="stamp n">NE</div>
+    <div class="info"><h2>${p.name} <span style="font-weight:400">${p.age}</span></h2><div>📍 0.1 km od tebe · online</div><div style="margin-top:6px">${p.bio}</div></div>`;
+  deck.appendChild(c); showMedia(c, p, 0); drag(c, p);
+  p.media.forEach(m => { if (!m.endsWith(".mp4")) new Image().src = m; });   // přednačíst
 }
-function drag(c) {
+function showMedia(c, p, i) {
+  c.dataset.i = i; const m = p.media[i], box = c.querySelector(".media");
+  box.innerHTML = m.endsWith(".mp4")
+    ? `<video src="${m}" autoplay muted loop playsinline></video>`
+    : `<img src="${m}" alt="" draggable="false">`;
+  c.querySelectorAll(".bars i").forEach((b, k) => b.classList.toggle("on", k === i));
+}
+function drag(c, p) {
   let sx = 0, dx = 0, on = false;
-  c.onpointerdown = e => { on = true; sx = e.clientX; c.setPointerCapture(e.pointerId); c.style.transition = "none"; };
-  c.onpointermove = e => { if (!on) return; dx = e.clientX - sx; c.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
+  c.onpointerdown = e => { on = true; sx = e.clientX; dx = 0; c.setPointerCapture(e.pointerId); c.style.transition = "none"; };
+  c.onpointermove = e => { if (!on) return; dx = e.clientX - sx; if (Math.abs(dx) < 6) return; c.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
     c.querySelector(".l").style.opacity = Math.max(0, dx/90); c.querySelector(".n").style.opacity = Math.max(0, -dx/90); };
-  c.onpointerup = c.onpointercancel = () => { if (!on) return; on = false;
-    if (Math.abs(dx) > 100) swipe(Math.sign(dx)); else { c.style.transition = "transform .3s"; c.style.transform = ""; c.querySelectorAll(".stamp").forEach(s => s.style.opacity = 0); } dx = 0; };
+  c.onpointerup = e => { if (!on) return; on = false;
+    if (Math.abs(dx) > 100) swipe(Math.sign(dx));
+    else if (Math.abs(dx) < 6) {   // ťuknutí = další/předchozí fotka
+      const r = c.getBoundingClientRect(), i = +c.dataset.i, n = p.media.length;
+      showMedia(c, p, e.clientX < r.left + r.width / 2 ? Math.max(0, i - 1) : Math.min(n - 1, i + 1));
+      c.style.transform = "";
+    } else { c.style.transition = "transform .3s"; c.style.transform = ""; c.querySelectorAll(".stamp").forEach(s => s.style.opacity = 0); }
+    dx = 0; };
+  c.onpointercancel = () => { on = false; c.style.transition = "transform .3s"; c.style.transform = ""; dx = 0; };
 }
 function swipe(dir) {
   const c = $("deck").firstElementChild; if (!c) return;

@@ -79,7 +79,7 @@
     <div class="flame">🔥</div>
     <h1>jenom Ondra</h1>
     <p>Seznamka s jediným profilem. Tím nejlepším.</p>
-    <input id="pw" type="text" placeholder="heslo" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input id="pw" type="password" placeholder="heslo" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <button id="loginBtn" class="btn">Vstoupit 💘</button>
     <div id="err"></div>
   </div>
@@ -92,6 +92,7 @@
 
     <!-- ona: swipe -->
     <div id="vSwipe" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div id="waitBar" class="hidden" style="margin-bottom:10px;padding:10px 14px;border-radius:14px;background:#1a1a21;font-size:14px;text-align:center">⏳ Lajk odeslán! Čeká se, až Ondra potvrdí match. Zatím si ho prohlížej dál 😏</div>
       <div id="deck"></div>
       <div class="controls"><button class="cb" onclick="swipe(-1)">❌</button><button class="cb" onclick="swipe(1)">💚</button></div>
     </div>
@@ -177,8 +178,9 @@ function info(html) { $("vInfo").innerHTML = html; show("vInfo"); }
 function route() {
   if (state.she_liked && state.he_confirmed) return openChat();
   if (role === "ona") {
-    if (!state.she_liked) { show("vSwipe"); renderCard(); }
-    else info(`<div class="e">⏳</div><h2>Lajk odeslán!</h2><p>Teď se čeká, až Ondra potvrdí match. Neboj, dlouho to trvat nebude 😏</p>`);
+    const wasHidden = $("vSwipe").classList.contains("hidden");
+    show("vSwipe"); if (wasHidden || !$("deck").firstElementChild) renderCard();
+    $("waitBar").classList.toggle("hidden", !state.she_liked);
   } else {
     if (!state.she_liked) info(`<div class="e">👀</div><h2>Zatím nic</h2><p>Ještě tě nelajkla. Čekej trpělivě, krasavče.</p>`);
     else info(`<div class="e">💘</div><h2>Lajkla tě!</h2><p>Chceš potvrdit match a otevřít chat?</p><button class="btn" style="max-width:300px" onclick="setState({he_confirmed:true})">Potvrdit match 💚</button>`);
@@ -207,7 +209,8 @@ function swipe(dir) {
   const c = $("deck").firstElementChild; if (!c) return;
   c.style.transition = "transform .4s"; c.style.transform = `translateX(${dir * innerWidth * 1.3}px) rotate(${dir*28}deg)`;
   setTimeout(() => {
-    if (dir > 0) setState({ she_liked:true });
+    if (dir > 0 && !state.she_liked) { idx++; renderCard(); setState({ she_liked:true }); }
+    else if (dir > 0) { idx++; renderCard(); }
     else { idx++; renderCard(); const [t,p] = NOPES[nopes++ % NOPES.length]; $("nopeT").textContent = t; $("nopeP").textContent = p; $("nope").classList.remove("hidden"); }
   }, 350);
 }
